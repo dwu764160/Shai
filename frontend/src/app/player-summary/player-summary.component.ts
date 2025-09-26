@@ -1,38 +1,31 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation
-} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {untilDestroyed, UntilDestroy} from '@ngneat/until-destroy';
-import {PlayersService} from '../_services/players.service';
+import { Component, OnInit } from '@angular/core';
+import { PlayersService } from '../_services/players.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { PlayerSummary } from './player-summary.model'; // <-- Import our new interface
 
 @UntilDestroy()
 @Component({
-  selector: 'player-summary-component',
+  selector: 'app-player-summary',
   templateUrl: './player-summary.component.html',
-  styleUrls: ['./player-summary.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./player-summary.component.scss']
 })
-export class PlayerSummaryComponent implements OnInit, OnDestroy {
+export class PlayerSummaryComponent implements OnInit {
+
+  public playerData: PlayerSummary | null = null; // <-- Add property to hold data
 
   constructor(
-    protected activatedRoute: ActivatedRoute,
-    protected cdr: ChangeDetectorRef,
-    protected playersService: PlayersService,
-  ) {
-
-  }
+    private playersService: PlayersService
+  ) { }
 
   ngOnInit(): void {
-    this.playersService.getPlayerSummary(1).pipe(untilDestroyed(this)).subscribe(data => {
-      console.log(data.apiResponse);
-    });
-  }
-
-  ngOnDestroy() {
+    // This currently fetches data for player_id = 0.
+    // We can make this dynamic later if needed.
+    this.playersService.getPlayerSummary(0).pipe(
+      untilDestroyed(this)
+    ).subscribe(response => {
+      this.playerData = response; // <-- Store the response in our property
+      console.log('Player Data Loaded:', this.playerData); // For debugging
+    })
   }
 
 }

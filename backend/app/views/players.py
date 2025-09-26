@@ -16,6 +16,7 @@ class PlayerSummary(APIView):
         print(playerID)
 
         player_summary = get_player_summary_stats(player_id=playerID)
-        player_summary = player_summary | get_ranks(player_id=playerID, player_summary=player_summary)
+        #player_summary = player_summary | get_ranks(player_id=playerID, player_summary=player_summary)
+        player_summary = get_ranks(player_summary)
 
         return Response(player_summary)
